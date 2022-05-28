@@ -14,6 +14,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(ur_robot_driver REQUIRED)
 
 find_package(Eigen3 REQUIRED)
@@ -45,22 +46,31 @@ target_link_libraries(calibration_correction
 ament_target_dependencies(
         calibration_correction
         rclcpp
+        rclcpp_lifecycle
         ur_robot_driver
 )
 
 install(TARGETS calibration_correction
         RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
+#install(TARGETS calibration_correction
+#        ARCHIVE DESTINATION lib
+#        LIBRARY DESTINATION lib
+#        RUNTIME DESTINATION bin
+#        )
+
 
 install(DIRECTORY include/
         DESTINATION include
 )
+
 
 install(DIRECTORY launch
         DESTINATION share/${PROJECT_NAME}
 )
 
 ## Add gtest based cpp test target and link libraries
+set(BUILD_TESTING 0)
 if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
 

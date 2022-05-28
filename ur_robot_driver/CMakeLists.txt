@@ -38,6 +38,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ur_dashboard_msgs
   std_msgs
   controller_manager_msgs
+        tf2_geometry_msgs
 )
 
 add_library(ur_robot_driver_plugin
@@ -75,8 +76,7 @@ target_include_directories(ur_ros2_control_node PUBLIC ${controller_manager_INCL
 target_link_libraries(ur_ros2_control_node ${controller_manager_LIBRARIES})
 ament_target_dependencies(ur_ros2_control_node
   controller_interface
-  hardware_interface
-  rclcpp
+        ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 add_executable(controller_stopper_node
