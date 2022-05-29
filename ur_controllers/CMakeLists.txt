@@ -25,6 +25,9 @@ find_package(std_srvs REQUIRED)
 find_package(ur_client_library REQUIRED)
 find_package(ur_dashboard_msgs REQUIRED)
 find_package(ur_msgs REQUIRED)
+find_package(angles REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
+
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   control_msgs
@@ -41,6 +44,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ur_client_library
   ur_dashboard_msgs
   ur_msgs
+        lifecycle_msgs
+        angles
 )
 
 include_directories(include)

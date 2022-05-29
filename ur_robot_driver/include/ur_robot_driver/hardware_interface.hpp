@@ -64,6 +64,8 @@ enum StoppingInterface
   STOP_VELOCITY
 };
 
+using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+
 /*!
  * \brief The HardwareInterface class handles the interface between the ROS system and the main
  * driver. It contains the read and write methods of the main control loop and registers various ROS
@@ -83,8 +85,8 @@ public:
   CallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state) final;
   CallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state) final;
 
-  hardware_interface::return_type read() final;
-  hardware_interface::return_type write() final;
+  hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period) final;
+  hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period) final;
 
   hardware_interface::return_type prepare_command_mode_switch(const std::vector<std::string>& start_interfaces,
                                                               const std::vector<std::string>& stop_interfaces) final;

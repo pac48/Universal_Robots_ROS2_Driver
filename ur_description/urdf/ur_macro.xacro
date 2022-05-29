@@ -331,6 +331,13 @@
       <dynamics damping="0" friction="0"/>
     </joint>
 
+      <link name="${prefix}ft_frame"/>
+        <joint name="${prefix}wrist_3_link-ft_frame" type="fixed">
+          <parent link="${prefix}wrist_3_link"/>
+          <child link="${prefix}ft_frame"/>
+          <origin xyz="0 0 0" rpy="${pi} 0 0"/>
+        </joint>
+
     <!-- ROS-Industrial 'base' frame - base_link to UR 'Base' Coordinates transform -->
     <link name="${prefix}base"/>
     <joint name="${prefix}base_link-base_fixed_joint" type="fixed">

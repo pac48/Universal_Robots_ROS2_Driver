@@ -106,26 +106,26 @@ ur_controllers::ForceTorqueStateBroadcaster::update(const rclcpp::Time& time, co
 
 CallbackReturn ForceTorqueStateBroadcaster::on_configure(const rclcpp_lifecycle::State& /*previous_state*/)
 {
-  fts_params_.state_interfaces_names_ = node_->get_parameter("state_interface_names").as_string_array();
+  fts_params_.state_interfaces_names_ = get_node()->get_parameter("state_interface_names").as_string_array();
 
   if (fts_params_.state_interfaces_names_.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "'state_interface_names' parameter was empty");
     return CallbackReturn::ERROR;
   }
 
-  fts_params_.sensor_name_ = node_->get_parameter("sensor_name").as_string();
+  fts_params_.sensor_name_ = get_node()->get_parameter("sensor_name").as_string();
   if (fts_params_.sensor_name_.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "'sensor_name' parameter was empty");
     return CallbackReturn::ERROR;
   }
 
-  fts_params_.topic_name = node_->get_parameter("topic_name").as_string();
+  fts_params_.topic_name = get_node()->get_parameter("topic_name").as_string();
   if (fts_params_.topic_name.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "'topic_name' parameter was empty");
     return CallbackReturn::ERROR;
   }
 
-  fts_params_.frame_id = node_->get_parameter("frame_id").as_string();
+  fts_params_.frame_id = get_node()->get_parameter("frame_id").as_string();
   if (fts_params_.frame_id.empty()) {
     RCLCPP_ERROR(get_node()->get_logger(), "'frame_id' parameter was empty");
     return CallbackReturn::ERROR;

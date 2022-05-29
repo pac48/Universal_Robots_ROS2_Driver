@@ -40,6 +40,7 @@ namespace rtde = urcl::rtde_interface;
 
 namespace ur_robot_driver
 {
+
 CallbackReturn URPositionHardwareInterface::on_init(const hardware_interface::HardwareInfo& system_info)
 {
   if (hardware_interface::SystemInterface::on_init(system_info) != CallbackReturn::SUCCESS) {
@@ -444,7 +445,7 @@ void URPositionHardwareInterface::asyncThread()
   }
 }
 
-hardware_interface::return_type URPositionHardwareInterface::read()
+hardware_interface::return_type URPositionHardwareInterface::read(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   std::unique_ptr<rtde::DataPackage> data_pkg = ur_driver_->getDataPackage();
 
@@ -530,7 +531,7 @@ hardware_interface::return_type URPositionHardwareInterface::read()
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type URPositionHardwareInterface::write()
+hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
   // If there is no interpreting program running on the robot, we do not want to send anything.
   // TODO(anyone): We would still like to disable the controllers requiring a writable interface. In ROS1

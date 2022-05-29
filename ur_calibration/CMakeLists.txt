@@ -14,6 +14,7 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(ur_robot_driver REQUIRED)
 
 find_package(Eigen3 REQUIRED)
@@ -46,6 +47,7 @@ ament_target_dependencies(
         calibration_correction
         rclcpp
         ur_robot_driver
+        rclcpp_lifecycle
 )
 
 install(TARGETS calibration_correction
@@ -61,6 +63,7 @@ install(DIRECTORY launch
 )
 
 ## Add gtest based cpp test target and link libraries
+set(BUILD_TESTING 0)
 if(BUILD_TESTING)
   find_package(ament_cmake_gmock REQUIRED)
 
