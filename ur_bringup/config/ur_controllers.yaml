@@ -1,6 +1,5 @@
 controller_manager:
   ros__parameters:
-    update_rate: 500  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -12,7 +11,7 @@ controller_manager:
       type: ur_controllers/SpeedScalingStateBroadcaster
 
     force_torque_sensor_broadcaster:
-      type: force_torque_sensor_broadcaster/ForceTorqueStateBroadcaster
+      type: ur_controllers/ForceTorqueStateBroadcaster
 
     joint_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController

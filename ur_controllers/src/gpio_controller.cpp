@@ -1,30 +1,16 @@
 // Copyright (c) 2021 PickNik LLC
 //
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the {copyright_holder} nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 //----------------------------------------------------------------------
 /*!\file
@@ -41,11 +27,11 @@
 
 namespace ur_controllers
 {
-controller_interface::CallbackReturn GPIOController::on_init()
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn GPIOController::on_init()
 {
   initMsgs();
 
-  return controller_interface::CallbackReturn::SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 controller_interface::InterfaceConfiguration GPIOController::command_interface_configuration() const
@@ -134,9 +120,6 @@ controller_interface::InterfaceConfiguration ur_controllers::GPIOController::sta
   }
   config.names.emplace_back("system_interface/initialized");
 
-  // program running
-  config.names.emplace_back("gpio/program_running");
-
   return config;
 }
 
@@ -147,11 +130,10 @@ controller_interface::return_type ur_controllers::GPIOController::update(const r
   publishToolData();
   publishRobotMode();
   publishSafetyMode();
-  publishProgramRunning();
   return controller_interface::return_type::OK;
 }
 
-controller_interface::CallbackReturn
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ur_controllers::GPIOController::on_configure(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   return LifecycleNodeInterface::CallbackReturn::SUCCESS;
@@ -225,17 +207,7 @@ void GPIOController::publishSafetyMode()
   }
 }
 
-void GPIOController::publishProgramRunning()
-{
-  auto program_running_value = static_cast<uint8_t>(state_interfaces_[StateInterfaces::PROGRAM_RUNNING].get_value());
-  bool program_running = program_running_value == 1.0 ? true : false;
-  if (program_running_msg_.data != program_running) {
-    program_running_msg_.data = program_running;
-    program_state_pub_->publish(program_running_msg_);
-  }
-}
-
-controller_interface::CallbackReturn
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   while (state_interfaces_[StateInterfaces::INITIALIZED_FLAG].get_value() == 0.0) {
@@ -256,11 +228,6 @@ ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*pre
     safety_mode_pub_ =
         get_node()->create_publisher<ur_dashboard_msgs::msg::SafetyMode>("~/safety_mode", rclcpp::SystemDefaultsQoS());
 
-    auto program_state_pub_qos = rclcpp::SystemDefaultsQoS();
-    program_state_pub_qos.transient_local();
-    program_state_pub_ =
-        get_node()->create_publisher<std_msgs::msg::Bool>("~/robot_program_running", program_state_pub_qos);
-
     set_io_srv_ = get_node()->create_service<ur_msgs::srv::SetIO>(
         "~/set_io", std::bind(&GPIOController::setIO, this, std::placeholders::_1, std::placeholders::_2));
 
@@ -280,7 +247,7 @@ ur_controllers::GPIOController::on_activate(const rclcpp_lifecycle::State& /*pre
   return LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-controller_interface::CallbackReturn
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ur_controllers::GPIOController::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   try {
@@ -289,7 +256,6 @@ ur_controllers::GPIOController::on_deactivate(const rclcpp_lifecycle::State& /*p
     tool_data_pub_.reset();
     robot_mode_pub_.reset();
     safety_mode_pub_.reset();
-    program_state_pub_.reset();
     set_io_srv_.reset();
     set_speed_slider_srv_.reset();
   } catch (...) {
@@ -353,7 +319,7 @@ bool GPIOController::setSpeedSlider(ur_msgs::srv::SetSpeedSliderFraction::Reques
         static_cast<bool>(command_interfaces_[CommandInterfaces::TARGET_SPEED_FRACTION_ASYNC_SUCCESS].get_value());
   } else {
     RCLCPP_WARN(get_node()->get_logger(), "The desired speed slider fraction must be within range (0; 1.0]. Request "
-                                          "ignored.");
+                                     "ignored.");
     resp->success = false;
     return false;
   }

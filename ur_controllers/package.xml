@@ -13,18 +13,16 @@
   <maintainer email="denis.stogl@picknik.ai">Denis Stogl</maintainer>
   <maintainer email="zelenak@picknik.ai">Andy Zelenak</maintainer>
 
-  <license>BSD-3-Clause</license>
+  <license>Apache License 2.0</license>
 
   <url type="bugtracker">https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/issues</url>
   <url type="repository">https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <depend>angles</depend>
   <depend>control_msgs</depend>
   <depend>controller_interface</depend>
   <depend>geometry_msgs</depend>
-  <depend>lifecycle_msgs</depend>
   <depend>joint_trajectory_controller</depend>
   <depend>pluginlib</depend>
   <depend>rclcpp_lifecycle</depend>
@@ -33,6 +31,8 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>std_srvs</depend>
+  <depend>angles</depend>
+  <depend>lifecycle_msgs</depend>
   <!-- TODO: rosdep cannot find ur_client_library -->
   <depend>ur_client_library</depend>
   <depend>ur_dashboard_msgs</depend>

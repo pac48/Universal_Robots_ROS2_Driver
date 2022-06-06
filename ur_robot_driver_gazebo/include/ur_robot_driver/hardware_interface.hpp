@@ -69,11 +69,7 @@ class URPositionHardwareInterface : public hardware_interface::SystemInterface
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(URPositionHardwareInterface);
 
-  ~URPositionHardwareInterface (){
-      raise(SIGTERM);
-      joint_subscriber_thread.join();
-      wrench_subscriber_thread.join();
-  }
+  ~URPositionHardwareInterface (){}
 
   CallbackReturn on_init(const hardware_interface::HardwareInfo& system_info) final;
 
@@ -126,7 +122,6 @@ protected:
   urcl::vector6d_t urcl_joint_velocities_ = {nan("")};
   urcl::vector6d_t urcl_joint_efforts_ = {nan("")};
   urcl::vector6d_t urcl_ft_sensor_measurements_ = {nan("")};
-  urcl::vector6d_t urcl_ft_sensor_commands_ = {0};//nan("")};
   urcl::vector6d_t urcl_tcp_pose_ = {nan("")};
 
 //  bool packet_read_;

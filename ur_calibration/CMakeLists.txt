@@ -16,6 +16,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(ur_robot_driver REQUIRED)
+find_package(universal_robot_ign REQUIRED)
 
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -46,24 +47,18 @@ target_link_libraries(calibration_correction
 ament_target_dependencies(
         calibration_correction
         rclcpp
-        rclcpp_lifecycle
         ur_robot_driver
+        universal_robot_ign
+        rclcpp_lifecycle
 )
 
 install(TARGETS calibration_correction
         RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
-#install(TARGETS calibration_correction
-#        ARCHIVE DESTINATION lib
-#        LIBRARY DESTINATION lib
-#        RUNTIME DESTINATION bin
-#        )
-
 
 install(DIRECTORY include/
         DESTINATION include
 )
-
 
 install(DIRECTORY launch
         DESTINATION share/${PROJECT_NAME}
@@ -96,5 +91,6 @@ ament_export_include_directories(
 ament_export_dependencies(
         ur_robot_driver
         rclcpp
+        universal_robot_ign
 )
 ament_package()

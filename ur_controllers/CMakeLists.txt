@@ -11,12 +11,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(angles REQUIRED)
 find_package(control_msgs REQUIRED)
 find_package(controller_interface REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(joint_trajectory_controller REQUIRED)
-find_package(lifecycle_msgs REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rcutils REQUIRED)
@@ -27,14 +25,15 @@ find_package(std_srvs REQUIRED)
 find_package(ur_client_library REQUIRED)
 find_package(ur_dashboard_msgs REQUIRED)
 find_package(ur_msgs REQUIRED)
+find_package(angles REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
+
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
-  angles
   control_msgs
   controller_interface
   geometry_msgs
   joint_trajectory_controller
-  lifecycle_msgs
   pluginlib
   rclcpp_lifecycle
   rcutils
@@ -45,6 +44,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   ur_client_library
   ur_dashboard_msgs
   ur_msgs
+        lifecycle_msgs
+        angles
 )
 
 include_directories(include)
@@ -52,6 +53,7 @@ include_directories(include)
 add_library(${PROJECT_NAME} SHARED
   src/scaled_joint_trajectory_controller.cpp
   src/speed_scaling_state_broadcaster.cpp
+  src/force_torque_sensor_broadcaster.cpp
   src/gpio_controller.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
