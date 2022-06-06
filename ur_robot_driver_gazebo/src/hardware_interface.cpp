@@ -53,6 +53,7 @@ CallbackReturn URPositionHardwareInterface::on_init(const hardware_interface::Ha
   urcl_joint_velocities_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_joint_efforts_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_ft_sensor_measurements_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+  urcl_ft_sensor_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_tcp_pose_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_position_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
   urcl_position_commands_old_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
@@ -136,18 +137,18 @@ std::vector<hardware_interface::StateInterface> URPositionHardwareInterface::exp
         info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &urcl_joint_efforts_[i]));
   }
 
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "force.x", &urcl_ft_sensor_measurements_[0]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "force.y",  &urcl_ft_sensor_measurements_[1]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "force.z", &urcl_ft_sensor_measurements_[2]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "torque.x", &urcl_ft_sensor_measurements_[3]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "torque.y", &urcl_ft_sensor_measurements_[4]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "torque.z", &urcl_ft_sensor_measurements_[5]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "force.x", &urcl_ft_sensor_measurements_[0]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "force.y",  &urcl_ft_sensor_measurements_[1]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "force.z", &urcl_ft_sensor_measurements_[2]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "torque.x", &urcl_ft_sensor_measurements_[3]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "torque.y", &urcl_ft_sensor_measurements_[4]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "torque.z", &urcl_ft_sensor_measurements_[5]));
 
   state_interfaces.emplace_back(
       hardware_interface::StateInterface("speed_scaling", "speed_scaling_factor", &speed_scaling_combined_));
@@ -228,17 +229,17 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
   }
 
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "force.x", &urcl_ft_sensor_measurements_[0]));
+                                                                     "force.x", &urcl_ft_sensor_commands_[0]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "force.y",  &urcl_ft_sensor_measurements_[1]));
+                                                                     "force.y",  &urcl_ft_sensor_commands_[1]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "force.z", &urcl_ft_sensor_measurements_[2]));
+                                                                     "force.z", &urcl_ft_sensor_commands_[2]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "torque.x", &urcl_ft_sensor_measurements_[3]));
+                                                                     "torque.x", &urcl_ft_sensor_commands_[3]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "torque.y", &urcl_ft_sensor_measurements_[4]));
+                                                                     "torque.y", &urcl_ft_sensor_commands_[4]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "torque.z", &urcl_ft_sensor_measurements_[5]));
+                                                                     "torque.z", &urcl_ft_sensor_commands_[5]));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface("gpio", "io_async_success", &io_async_success_));
 
@@ -479,12 +480,12 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
     ign_joint_publisher->setJointPositionCb(std::make_shared<sensor_msgs::msg::JointState>(msg));
 
     // need to write wrench values if present
-    msg2.force.x = urcl_ft_sensor_measurements_[0];
-    msg2.force.y = urcl_ft_sensor_measurements_[1];
-    msg2.force.z = urcl_ft_sensor_measurements_[2];
-    msg2.torque.x = urcl_ft_sensor_measurements_[3];
-    msg2.torque.y = urcl_ft_sensor_measurements_[4];
-    msg2.torque.z = urcl_ft_sensor_measurements_[5];
+    msg2.force.x = urcl_ft_sensor_commands_[0];
+    msg2.force.y = urcl_ft_sensor_commands_[1];
+    msg2.force.z = urcl_ft_sensor_commands_[2];
+    msg2.torque.x = urcl_ft_sensor_commands_[3];
+    msg2.torque.y = urcl_ft_sensor_commands_[4];
+    msg2.torque.z = urcl_ft_sensor_commands_[5];
 
     ign_wrench_publisher->setWrenchCb(std::make_shared<geometry_msgs::msg::Wrench>(msg2));
 
