@@ -16,7 +16,6 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(ur_robot_driver REQUIRED)
-find_package(universal_robot_ign REQUIRED)
 
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -48,7 +47,6 @@ ament_target_dependencies(
         calibration_correction
         rclcpp
         ur_robot_driver
-        universal_robot_ign
         rclcpp_lifecycle
 )
 
@@ -91,6 +89,5 @@ ament_export_include_directories(
 ament_export_dependencies(
         ur_robot_driver
         rclcpp
-        universal_robot_ign
 )
 ament_package()

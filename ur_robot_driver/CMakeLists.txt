@@ -1,15 +1,20 @@
 cmake_minimum_required(VERSION 3.5)
 project(ur_robot_driver)
 
-add_compile_options(-std=c++11)
-add_compile_options(-Wall)
-add_compile_options(-Wextra)
-add_compile_options(-Wno-unused-parameter)
+#add_compile_options(-std=c++11)
+#add_compile_options(-Wall)
+#add_compile_options(-Wextra)
+#add_compile_options(-Wno-unused-parameter)
+#
+#if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+#  message("${PROJECT_NAME}: You did not request a specific build type: selecting 'RelWithDebInfo'.")
+#  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+#endif()
 
-if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-  message("${PROJECT_NAME}: You did not request a specific build type: selecting 'RelWithDebInfo'.")
-  set(CMAKE_BUILD_TYPE RelWithDebInfo)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra)
 endif()
+
 
 find_package(ament_cmake REQUIRED)
 find_package(controller_manager REQUIRED)
@@ -23,8 +28,8 @@ find_package(tf2_geometry_msgs REQUIRED)
 find_package(ur_client_library REQUIRED)
 find_package(ur_dashboard_msgs REQUIRED)
 find_package(rclpy REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(controller_manager_msgs REQUIRED)
+find_package(controller_interface REQUIRED)
+
 
 include_directories(include)
 
@@ -36,9 +41,9 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   std_srvs
   ur_client_library
   ur_dashboard_msgs
-  std_msgs
-  controller_manager_msgs
         tf2_geometry_msgs
+        controller_interface
+        rclcpp_lifecycle
 )
 
 add_library(ur_robot_driver_plugin
@@ -68,6 +73,7 @@ add_executable(dashboard_client
   src/dashboard_client_node.cpp
   src/urcl_log_handler.cpp
 )
+
 target_link_libraries(dashboard_client ${catkin_LIBRARIES} ur_client_library::urcl)
 ament_target_dependencies(dashboard_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
@@ -76,17 +82,13 @@ target_include_directories(ur_ros2_control_node PUBLIC ${controller_manager_INCL
 target_link_libraries(ur_ros2_control_node ${controller_manager_LIBRARIES})
 ament_target_dependencies(ur_ros2_control_node
   controller_interface
-        ${THIS_PACKAGE_INCLUDE_DEPENDS}
+  hardware_interface
+  rclcpp
+        rclcpp_lifecycle
 )
-
-add_executable(controller_stopper_node
-  src/controller_stopper.cpp
-  src/controller_stopper_node.cpp
-)
-ament_target_dependencies(controller_stopper_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 install(
-  TARGETS dashboard_client ur_ros2_control_node controller_stopper_node
+  TARGETS dashboard_client ur_ros2_control_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -139,8 +141,7 @@ install(PROGRAMS scripts/wait_dashboard_server.sh
   DESTINATION bin
 )
 
-ament_package()
-
+set(BUILD_TESTING 0)
 if(BUILD_TESTING)
   find_package(ur_controllers REQUIRED)
   find_package(ur_description REQUIRED)
@@ -150,3 +151,7 @@ if(BUILD_TESTING)
   add_launch_test(test/integration_test_1.py)
   add_launch_test(test/integration_test_2.py)
 endif()
+
+ament_package()
+
+

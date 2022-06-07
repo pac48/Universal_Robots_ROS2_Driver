@@ -49,14 +49,15 @@ CallbackReturn URPositionHardwareInterface::on_init(const hardware_interface::Ha
     info_ = system_info;
 
     // initialize
-  urcl_joint_positions_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_joint_velocities_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_joint_efforts_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_ft_sensor_measurements_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_tcp_pose_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_position_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_position_commands_old_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
-  urcl_velocity_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_joint_positions_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,    0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_joint_velocities_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,    0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_joint_efforts_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_ft_sensor_measurements_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_ft_sensor_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_tcp_pose_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_position_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_position_commands_old_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
+//  urcl_velocity_commands_ = { { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 } };
 
 
   for (const hardware_interface::ComponentInfo& joint : info_.joints) {
@@ -136,18 +137,18 @@ std::vector<hardware_interface::StateInterface> URPositionHardwareInterface::exp
         info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &urcl_joint_efforts_[i]));
   }
 
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "force.x", &urcl_ft_sensor_measurements_[0]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "force.y",  &urcl_ft_sensor_measurements_[1]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "force.z", &urcl_ft_sensor_measurements_[2]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "torque.x", &urcl_ft_sensor_measurements_[3]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "torque.y", &urcl_ft_sensor_measurements_[4]));
-    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
-            "torque.z", &urcl_ft_sensor_measurements_[5]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "force.x", &urcl_ft_sensor_measurements_[0]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "force.y",  &urcl_ft_sensor_measurements_[1]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "force.z", &urcl_ft_sensor_measurements_[2]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "torque.x", &urcl_ft_sensor_measurements_[3]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "torque.y", &urcl_ft_sensor_measurements_[4]));
+//    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
+//            "torque.z", &urcl_ft_sensor_measurements_[5]));
 
   state_interfaces.emplace_back(
       hardware_interface::StateInterface("speed_scaling", "speed_scaling_factor", &speed_scaling_combined_));
@@ -228,17 +229,17 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
   }
 
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "force.x", &urcl_ft_sensor_measurements_[0]));
+                                                                     "force.x", &urcl_ft_sensor_commands_[0]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "force.y",  &urcl_ft_sensor_measurements_[1]));
+                                                                     "force.y",  &urcl_ft_sensor_commands_[1]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "force.z", &urcl_ft_sensor_measurements_[2]));
+                                                                     "force.z", &urcl_ft_sensor_commands_[2]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "torque.x", &urcl_ft_sensor_measurements_[3]));
+                                                                     "torque.x", &urcl_ft_sensor_commands_[3]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "torque.y", &urcl_ft_sensor_measurements_[4]));
+                                                                     "torque.y", &urcl_ft_sensor_commands_[4]));
     command_interfaces.emplace_back(hardware_interface::CommandInterface("tcp_fts_sensor",
-                                                                     "torque.z", &urcl_ft_sensor_measurements_[5]));
+                                                                     "torque.z", &urcl_ft_sensor_commands_[5]));
 
   command_interfaces.emplace_back(hardware_interface::CommandInterface("gpio", "io_async_success", &io_async_success_));
 
@@ -408,7 +409,8 @@ CallbackReturn URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::
     std::vector<std::string> joint_names;//={"/model/ur10/joint/%s/0/cmd_pos"};
 
     for (auto joint : info_.joints){
-        ign_joint_topics_list.push_back("/model/ur10/joint/"+joint.name+"/0/cmd_pos");
+//        ign_joint_topics_list.push_back("/model/ur10/joint/"+joint.name+"/0/cmd_pos");
+        ign_joint_topics_list.push_back("/model/ur10/joint/"+joint.name+"/cmd_vel");
         joint_names.push_back(joint.name);
     }
 
@@ -469,22 +471,29 @@ hardware_interface::return_type URPositionHardwareInterface::read(const rclcpp::
 hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp::Time & time, const rclcpp::Duration & period)
 {
 
-    sensor_msgs::msg::JointState msg = ign_joint_subscriber->getJointStateMsg();
-    geometry_msgs::msg::Wrench msg2 = ign_wrench_subscriber->getWrenchMsg();
+    sensor_msgs::msg::JointState msg;// = ign_joint_subscriber->getJointStateMsg();
+    msg.velocity.resize(urcl_velocity_commands_.size());
+    geometry_msgs::msg::Wrench msg2;// = ign_wrench_subscriber->getWrenchMsg();
 
-    for (int i=0; i < urcl_position_commands_.size(); i++){
-        msg.position[i] = urcl_position_commands_[i];
+    //TODO add positon ocntorl mode
+
+
+    for (int i=0; i < urcl_velocity_commands_.size(); i++){
+        msg.velocity[i] = urcl_velocity_commands_[i];
+        if (std::isnan(msg.velocity[i]) ){
+            msg.velocity[i] = 0;
+        }
     }
 
-    ign_joint_publisher->setJointPositionCb(std::make_shared<sensor_msgs::msg::JointState>(msg));
+    ign_joint_publisher->setJointVelocityCb(std::make_shared<sensor_msgs::msg::JointState>(msg));
 
     // need to write wrench values if present
-    msg2.force.x = urcl_ft_sensor_measurements_[0];
-    msg2.force.y = urcl_ft_sensor_measurements_[1];
-    msg2.force.z = urcl_ft_sensor_measurements_[2];
-    msg2.torque.x = urcl_ft_sensor_measurements_[3];
-    msg2.torque.y = urcl_ft_sensor_measurements_[4];
-    msg2.torque.z = urcl_ft_sensor_measurements_[5];
+    msg2.force.x = urcl_ft_sensor_commands_[0];
+    msg2.force.y = urcl_ft_sensor_commands_[1];
+    msg2.force.z = urcl_ft_sensor_commands_[2];
+    msg2.torque.x = urcl_ft_sensor_commands_[3];
+    msg2.torque.y = urcl_ft_sensor_commands_[4];
+    msg2.torque.z = urcl_ft_sensor_commands_[5];
 
     ign_wrench_publisher->setWrenchCb(std::make_shared<geometry_msgs::msg::Wrench>(msg2));
 

@@ -14,7 +14,6 @@
   <depend>rclcpp</depend>
   <depend>ur_client_library</depend>
   <depend>ur_robot_driver</depend>
-  <depend>universal_robot_ign</depend>
 
   <depend>eigen</depend>
   <depend>yaml-cpp</depend>
