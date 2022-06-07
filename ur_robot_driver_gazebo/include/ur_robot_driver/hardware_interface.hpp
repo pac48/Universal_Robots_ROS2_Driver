@@ -197,8 +197,8 @@ protected:
 //  // resources switching aux vars
 //  std::vector<uint> stop_modes_;
 //  std::vector<std::string> start_modes_;
-//  bool position_controller_running_;
-//  bool velocity_controller_running_;
+  bool position_controller_running_;
+  bool velocity_controller_running_;
 //
 //  std::unique_ptr<urcl::UrDriver> ur_driver_;
 //  std::shared_ptr<std::thread> async_thread_;

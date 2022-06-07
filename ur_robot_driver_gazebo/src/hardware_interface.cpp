@@ -136,7 +136,7 @@ std::vector<hardware_interface::StateInterface> URPositionHardwareInterface::exp
     state_interfaces.emplace_back(hardware_interface::StateInterface(
         info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &urcl_joint_efforts_[i]));
   }
-
+//
 //    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
 //            "force.x", &urcl_ft_sensor_measurements_[0]));
 //    state_interfaces.emplace_back(hardware_interface::StateInterface("tcp_fts_sensor",
@@ -281,6 +281,15 @@ std::vector<hardware_interface::CommandInterface> URPositionHardwareInterface::e
 CallbackReturn URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::State& previous_state)
 {
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "Starting ...please wait...");
+
+    position_controller_running_ = false;
+    velocity_controller_running_ = false;
+
+    if (info_.hardware_parameters["control_mode"] ==  "velocity"){
+        velocity_controller_running_ = true;
+    } else{
+        position_controller_running_ = true;
+    }
 
   // The robot's IP address.
   std::string robot_ip = info_.hardware_parameters["robot_ip"];
@@ -430,7 +439,8 @@ CallbackReturn URPositionHardwareInterface::on_activate(const rclcpp_lifecycle::
     ign_joint_publisher = std::make_shared<universal_robot_ign::IGNJointPublisher>(joint_names, ign_joint_topics_list);
 
 //    ign_wrench_publisher = std::make_shared<universal_robot_ign::IGNWrenchPublisher>("/model/ur10/joint/ft_joint/0/cmd_force");
-    ign_wrench_publisher = std::make_shared<universal_robot_ign::IGNWrenchPublisher>("/model/ur10/link/ft_link/cmd_wrench");
+//    ign_wrench_publisher = std::make_shared<universal_robot_ign::IGNWrenchPublisher>("/model/ur10/link/ft_link/cmd_wrench");
+    ign_wrench_publisher = std::make_shared<universal_robot_ign::IGNWrenchPublisher>("/model/ur10/link/robotiq_arg2f_base_link/cmd_wrench");
 
 
   RCLCPP_INFO(rclcpp::get_logger("URPositionHardwareInterface"), "System successfully started!");
@@ -472,20 +482,37 @@ hardware_interface::return_type URPositionHardwareInterface::write(const rclcpp:
 {
 
     sensor_msgs::msg::JointState msg;// = ign_joint_subscriber->getJointStateMsg();
-    msg.velocity.resize(urcl_velocity_commands_.size());
+    sensor_msgs::msg::JointState msg_cur;// = ign_joint_subscriber->getJointStateMsg();
+
     geometry_msgs::msg::Wrench msg2;// = ign_wrench_subscriber->getWrenchMsg();
 
     //TODO add positon ocntorl mode
 
+  if (position_controller_running_){
+      msg_cur = ign_joint_subscriber->getJointStateMsg();
+      msg.position.resize(urcl_position_commands_.size());
+      for (int i=0; i < urcl_position_commands_.size(); i++){
+          msg.position[i] = urcl_position_commands_[i];
+          // if any are nan, send the current robot state
+          if (std::isnan(msg.position[i]) ){
+              msg = msg_cur;
+              break;
+          }
+      }
+      ign_joint_publisher->setJointPositionCb(std::make_shared<sensor_msgs::msg::JointState>(msg), std::make_shared<sensor_msgs::msg::JointState>(msg_cur));
 
-    for (int i=0; i < urcl_velocity_commands_.size(); i++){
-        msg.velocity[i] = urcl_velocity_commands_[i];
-        if (std::isnan(msg.velocity[i]) ){
-            msg.velocity[i] = 0;
-        }
-    }
+  } else if(velocity_controller_running_){
+      msg.velocity.resize(urcl_velocity_commands_.size());
+      for (int i=0; i < urcl_velocity_commands_.size(); i++){
+          msg.velocity[i] = urcl_velocity_commands_[i];
+          if (std::isnan(msg.velocity[i]) ){
+              msg.velocity[i] = 0;
+          }
+      }
+      ign_joint_publisher->setJointVelocityCb(std::make_shared<sensor_msgs::msg::JointState>(msg));
 
-    ign_joint_publisher->setJointVelocityCb(std::make_shared<sensor_msgs::msg::JointState>(msg));
+  }
+
 
     // need to write wrench values if present
     msg2.force.x = urcl_ft_sensor_commands_[0];

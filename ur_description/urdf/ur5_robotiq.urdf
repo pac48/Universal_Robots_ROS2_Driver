@@ -639,6 +639,8 @@
         <param name="tool_tx_idle_chars">3.5</param>
         <param name="tool_device_name">/tmp/ttyUR</param>
         <param name="tool_tcp_port">54321</param>
+<!--        <param name="control_mode">velocity</param>-->
+        <param name="control_mode">position</param>
     </hardware>
     <joint name="shoulder_pan_joint">
       <command_interface name="position">
